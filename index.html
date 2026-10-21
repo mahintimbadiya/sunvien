@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunvien.ev - Smart EV Charging Platform</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --sunvien-green: #10b981;
+            --sunvien-dark: #0f172a;
+            --sunvien-card: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* SPA View Transitions */
+        .page-view {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Brand Colors */
+        .text-accent { color: var(--sunvien-green) !important; }
+        .bg-accent { background-color: var(--sunvien-green) !important; }
+        .btn-sunvien { background-color: var(--sunvien-green); color: white; border: none; }
+        .btn-sunvien:hover { background-color: #059669; color: white; }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 80px 0;
+        }
+
+        /* Admin Sidebar */
+        .admin-sidebar {
+            background-color: #0f172a;
+            min-height: calc(100vh - 56px);
+        }
+
+        .admin-sidebar .nav-link {
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+        }
+
+        .admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
+            color: #10b981;
+            background-color: #1e293b;
+        }
+
+        footer {
+            margin-top: auto;
+            background-color: #0f172a;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CLIENT NAVBAR -->
+    <nav id="clientNavbar" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-accent fs-4" href="#" onclick="navigateTo('home')">
+                <i class="bi bi-ev-station me-1"></i> Sunvien.ev
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#clientNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="clientNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link nav-client-link" id="link-home" href="#" onclick="navigateTo('home')">1. Home</a></li>
+                    <li class="nav-item"><a class="nav-link nav-client-link" id="link-stations" href="#" onclick="navigateTo('stations')">2. Find Stations</a></li>
+                    <li class="nav-item"><a class="nav-link nav-client-link" id="link-book" href="#" onclick="navigateTo('book')">3. Reserve Slot</a></li>
+                    <li class="nav-item"><a class="nav-link nav-client-link" id="link-pricing" href="#" onclick="navigateTo('pricing')">4. Tariffs & Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link nav-client-link" id="link-contact" href="#" onclick="navigateTo('contact')">5. Support</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-outline-warning btn-sm rounded-pill px-3" onclick="switchToAdmin()">
+                        <i class="bi bi-shield-lock me-1"></i> Open Admin Portal (5 Pages)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ADMIN HEADER -->
+    <nav id="adminHeader" class="navbar navbar-dark bg-black shadow-sm d-none">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold text-accent fs-4" href="#">
+                <i class="bi bi-cpu me-1"></i> Sunvien.ev <span class="badge bg-danger fs-6 align-middle ms-2">Admin Panel</span>
+            </a>
+            <button class="btn btn-outline-light btn-sm rounded-pill" onclick="switchToClient()">
+                <i class="bi bi-box-arrow-left me-1"></i> Exit Admin Portal
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <div id="mainContent" class="flex-grow-1">
+
+        <!-- ================================================================= -->
+        <!-- CLIENT SIDE PAGES (5 PAGES)                                       -->
+        <!-- ================================================================= -->
+
+        <!-- CLIENT PAGE 1: HOME & PLATFORM HIGHLIGHTS -->
+        <section id="page-home" class="page-view active">
+            <div class="hero-banner">
+                <div class="container">
+                    <div class="row align-items-center gy-4">
+                        <div class="col-lg-6">
+                            <span class="badge bg-success bg-opacity-20 text-accent border border-success mb-3 px-3 py-2 rounded-pill">Next-Gen EV Network</span>
+                            <h1 class="display-4 fw-bold mb-3">Power Your Electric Journey with <span class="text-accent">Sunvien.ev</span></h1>
+                            <p class="lead text-light text-opacity-75 mb-4">Ultra-fast EV charging stations with live port visibility, instant slot reservation, and smart energy optimization.</p>
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-sunvien btn-lg px-4 rounded-pill" onclick="navigateTo('stations')">Find Nearby Charger</button>
+                                <button class="btn btn-outline-light btn-lg px-4 rounded-pill" onclick="navigateTo('book')">Book Slot Now</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 text-center">
+                            <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80" alt="Sunvien EV Charging Station" class="img-fluid rounded-4 shadow-lg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container py-5">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">Why Drivers Choose Sunvien.ev</h2>
+                    <p class="text-muted">Smart features engineered for a zero-friction EV charging experience.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-4 h-100">
+                            <i class="bi bi-geo-alt-fill text-accent fs-1 mb-2"></i>
+                            <h5 class="fw-bold">Live Hub Telemetry</h5>
+                            <p class="text-muted mb-0">Check real-time port availability, plug speeds (CCS2/Type 2), and power output before arriving.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-4 h-100">
+                            <i class="bi bi-clock-history text-accent fs-1 mb-2"></i>
+                            <h5 class="fw-bold">Zero-Wait Booking</h5>
+                            <p class="text-muted mb-0">Reserve a charger slot up to 24 hours in advance to guarantee fast power access on highways.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-4 h-100">
+                            <i class="bi bi-wallet2 text-accent fs-1 mb-2"></i>
+                            <h5 class="fw-bold">Automated Billing</h5>
+                            <p class="text-muted mb-0">Pay effortlessly using RFID card tap, Sunvien Digital Wallet, or credit cards.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT PAGE 2: EV STATIONS DIRECTORY -->
+        <section id="page-stations" class="page-view">
+            <div class="container py-5">
+                <h2 class="fw-bold mb-1">Charging Station Directory</h2>
+                <p class="text-muted mb-4">Locate available ports and ultra-fast DC hubs near your current route.</p>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control form-control-lg" placeholder="Search by city, area, or zip code...">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select form-select-lg">
+                            <option selected>All Plug Types</option>
+                            <option>CCS2 (DC Fast)</option>
+                            <option>Type 2 (AC)</option>
+                            <option>CHAdeMO</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-sunvien btn-lg w-100"><i class="bi bi-search me-1"></i> Search Hubs</button>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm h-100 border-0">
+                            <div class="card-body p-4">
+                                <span class="badge bg-success float-end px-2 py-1">4/6 Free</span>
+                                <h5 class="fw-bold mb-1">Sunvien Hub - Tech Park</h5>
+                                <p class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> Sector 5, Silicon Highway</p>
+                                <hr>
+                                <p class="mb-1"><i class="bi bi-lightning-charge text-warning"></i> Fast DC (150 kW)</p>
+                                <p class="fw-bold text-dark fs-5">$0.32 / kWh</p>
+                                <button class="btn btn-outline-success w-100 rounded-pill mt-2" onclick="navigateTo('book')">Reserve Slot</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm h-100 border-0">
+                            <div class="card-body p-4">
+                                <span class="badge bg-danger float-end px-2 py-1">Occupied</span>
+                                <h5 class="fw-bold mb-1">Sunvien Hub - Metro Mall</h5>
+                                <p class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> Central Avenue, Gate 3</p>
+                                <hr>
+                                <p class="mb-1"><i class="bi bi-lightning-charge text-warning"></i> AC Type 2 (22 kW)</p>
+                                <p class="fw-bold text-dark fs-5">$0.20 / kWh</p>
+                                <button class="btn btn-secondary w-100 rounded-pill mt-2" disabled>Currently Full</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm h-100 border-0">
+                            <div class="card-body p-4">
+                                <span class="badge bg-success float-end px-2 py-1">2/2 Free</span>
+                                <h5 class="fw-bold mb-1">Sunvien Express - North Way</h5>
+                                <p class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> Exit 12, Express Highway</p>
+                                <hr>
+                                <p class="mb-1"><i class="bi bi-lightning-charge text-warning"></i> Ultra-Fast (240 kW)</p>
+                                <p class="fw-bold text-dark fs-5">$0.40 / kWh</p>
+                                <button class="btn btn-outline-success w-100 rounded-pill mt-2" onclick="navigateTo('book')">Reserve Slot</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT PAGE 3: SLOT RESERVATION & JS FORM VALIDATION (FORM 1) -->
+        <section id="page-book" class="page-view">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-lg p-4 p-md-5 rounded-4">
+                            <h3 class="fw-bold text-success mb-1">Book a Charging Slot</h3>
+                            <p class="text-muted mb-4">Complete the details below to lock in your charging spot ahead of time.</p>
+
+                            <form id="bookingForm" class="needs-validation" novalidate>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="custName" class="form-label fw-semibold">Driver Full Name</label>
+                                        <input type="text" class="form-control" id="custName" placeholder="e.g. John Doe" required>
+                                        <div class="invalid-feedback">Please enter your name.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="regNum" class="form-label fw-semibold">Vehicle Registration Number</label>
+                                        <input type="text" class="form-control" id="regNum" placeholder="e.g. EV-1029-XX" required>
+                                        <div class="invalid-feedback">Vehicle registration required.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="stationSelect" class="form-label fw-semibold">Select Station</label>
+                                        <select class="form-select" id="stationSelect" required>
+                                            <option value="" selected disabled>Choose location...</option>
+                                            <option>Sunvien Hub - Tech Park ($0.32/kWh)</option>
+                                            <option>Sunvien Express - North Way ($0.40/kWh)</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a station hub.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="plugType" class="form-label fw-semibold">Connector Type</label>
+                                        <select class="form-select" id="plugType" required>
+                                            <option value="" selected disabled>Choose plug type...</option>
+                                            <option>CCS2 (DC Fast)</option>
+                                            <option>Type 2 (AC)</option>
+                                            <option>CHAdeMO</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select plug type.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="bookDate" class="form-label fw-semibold">Reservation Date</label>
+                                        <input type="date" class="form-control" id="bookDate" required>
+                                        <div class="invalid-feedback">Select a valid date.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="bookTime" class="form-label fw-semibold">Arrival Time</label>
+                                        <input type="time" class="form-control" id="bookTime" required>
+                                        <div class="invalid-feedback">Select arrival time.</div>
+                                    </div>
+                                    <div class="col-12 mt-4">
+                                        <button type="submit" class="btn btn-success w-100 btn-lg rounded-3 fw-bold">Confirm Slot Reservation</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT PAGE 4: PRICING & TARIFFS -->
+        <section id="page-pricing" class="page-view">
+            <div class="container py-5 text-center">
+                <h2 class="fw-bold mb-2">Transparent Charging Tariffs</h2>
+                <p class="text-muted mb-5">Select a flexible charging plan tailored to your driving routine.</p>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                            <h4 class="fw-bold mb-3">Pay-As-You-Go</h4>
+                            <h1 class="display-5 fw-bold text-success mb-3">$0.35 <span class="fs-6 text-muted">/ kWh</span></h1>
+                            <p class="text-muted mb-4">Standard tariff rate for casual city drivers and weekend highway trips.</p>
+                            <button class="btn btn-outline-success rounded-pill mt-auto" onclick="navigateTo('book')">Start Charging</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-2 border-success shadow p-4 rounded-4 h-100 position-relative">
+                            <span class="badge bg-success position-absolute top-0 start-50 translate-middle rounded-pill px-3 py-2">Most Popular</span>
+                            <h4 class="fw-bold mb-3 mt-2">Sunvien Pass</h4>
+                            <h1 class="display-5 fw-bold text-success mb-3">$19.99 <span class="fs-6 text-muted">/ month</span></h1>
+                            <p class="text-muted mb-4">Discounted tariff of $0.22/kWh + 15-minute priority booking hold.</p>
+                            <button class="btn btn-success rounded-pill mt-auto" onclick="navigateTo('book')">Subscribe Pass</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                            <h4 class="fw-bold mb-3">Commercial Fleet</h4>
+                            <h1 class="display-5 fw-bold text-dark mb-3">Custom</h1>
+                            <p class="text-muted mb-4">Designed for taxi fleets, logistics, and corporate EV operations.</p>
+                            <button class="btn btn-outline-dark rounded-pill mt-auto" onclick="navigateTo('contact')">Contact Sales</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT PAGE 5: SUPPORT & CONTACT FORM (FORM 2) -->
+        <section id="page-contact" class="page-view">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm p-4 p-md-5 rounded-4">
+                            <h3 class="fw-bold mb-2">Sunvien.ev Customer Support</h3>
+                            <p class="text-muted mb-4">Have questions regarding RFID tags, billing issues, or station availability?</p>
+
+                            <form id="contactForm" class="needs-validation" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Email Address</label>
+                                    <input type="email" class="form-control" placeholder="driver@domain.com" required>
+                                    <div class="invalid-feedback">Valid email address required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Subject</label>
+                                    <input type="text" class="form-control" placeholder="e.g. Charging Station Issue" required>
+                                    <div class="invalid-feedback">Subject is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Message</label>
+                                    <textarea class="form-control" rows="4" placeholder="Describe your issue..." required></textarea>
+                                    <div class="invalid-feedback">Please enter your message.</div>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100 btn-lg rounded-3">Submit Inquiry</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- ADMIN SIDE PAGES (5 PAGES)                                        -->
+        <!-- ================================================================= -->
+        <div id="adminContainer" class="d-none">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Sidebar Navigation -->
+                    <div class="col-md-3 col-lg-2 admin-sidebar p-3">
+                        <div class="nav flex-column nav-pills">
+                            <a class="nav-link active" id="admin-link-dashboard" href="#" onclick="navigateAdmin('admin-dashboard')">
+                                <i class="bi bi-speedometer2 me-2"></i> 1. Executive Dashboard
+                            </a>
+                            <a class="nav-link" id="admin-link-stations" href="#" onclick="navigateAdmin('admin-stations')">
+                                <i class="bi bi-ev-station me-2"></i> 2. Station Controls
+                            </a>
+                            <a class="nav-link" id="admin-link-bookings" href="#" onclick="navigateAdmin('admin-bookings')">
+                                <i class="bi bi-journal-text me-2"></i> 3. Booking Logs
+                            </a>
+                            <a class="nav-link" id="admin-link-users" href="#" onclick="navigateAdmin('admin-users')">
+                                <i class="bi bi-people me-2"></i> 4. Driver Directory
+                            </a>
+                            <a class="nav-link" id="admin-link-settings" href="#" onclick="navigateAdmin('admin-settings')">
+                                <i class="bi bi-gear me-2"></i> 5. System Config
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Admin Main Content Panel -->
+                    <div class="col-md-9 col-lg-10 p-4 bg-light">
+
+                        <!-- ADMIN PAGE 1: EXECUTIVE ANALYTICS DASHBOARD -->
+                        <div id="admin-dashboard" class="admin-view">
+                            <h3 class="fw-bold mb-4">Sunvien.ev Network Analytics</h3>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <div class="card p-3 border-0 shadow-sm border-start border-4 border-success">
+                                        <span class="text-muted small">Total Energy Delivered</span>
+                                        <h3 class="fw-bold my-1">12,450 kWh</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card p-3 border-0 shadow-sm border-start border-4 border-primary">
+                                        <span class="text-muted small">Active Sessions</span>
+                                        <h3 class="fw-bold my-1">18 Ports Active</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card p-3 border-0 shadow-sm border-start border-4 border-warning">
+                                        <span class="text-muted small">Daily Revenue</span>
+                                        <h3 class="fw-bold my-1">$4,320.50</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card p-3 border-0 shadow-sm border-start border-4 border-danger">
+                                        <span class="text-muted small">Hardware Status</span>
+                                        <h3 class="fw-bold my-1">1 Offline Hub</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ADMIN PAGE 2: CHARGING HUB HARDWARE CONTROL -->
+                        <div id="admin-stations" class="admin-view d-none">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h3 class="fw-bold">Charging Station Hardware Control</h3>
+                                <button class="btn btn-success"><i class="bi bi-plus-lg me-1"></i> Add New Station</button>
+                            </div>
+                            <div class="card border-0 shadow-sm">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Station ID</th>
+                                            <th>Location Name</th>
+                                            <th>Max Output</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>SUN-001</code></td>
+                                            <td>Sunvien Hub - Tech Park</td>
+                                            <td>150 kW DC</td>
+                                            <td><span class="badge bg-success">Online</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">Edit</button>
+                                                <button class="btn btn-sm btn-outline-danger">Disable</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>SUN-002</code></td>
+                                            <td>Sunvien Hub - Metro Mall</td>
+                                            <td>22 kW AC</td>
+                                            <td><span class="badge bg-warning text-dark">Maintenance</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">Edit</button>
+                                                <button class="btn btn-sm btn-outline-success">Enable</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ADMIN PAGE 3: RESERVATION & SESSION LOGS -->
+                        <div id="admin-bookings" class="admin-view d-none">
+                            <h3 class="fw-bold mb-4">Live Reservation & Charging Session Logs</h3>
+                            <div class="card border-0 shadow-sm">
+                                <table class="table table-striped align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Booking Ref</th>
+                                            <th>Driver Name</th>
+                                            <th>Vehicle Reg</th>
+                                            <th>Slot Time</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#SV-8841</td>
+                                            <td>Aarav Patel</td>
+                                            <td>GJ-03-EV-1002</td>
+                                            <td>Today, 14:00 PM</td>
+                                            <td><span class="badge bg-success">Confirmed</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#SV-8842</td>
+                                            <td>Priya Sharma</td>
+                                            <td>GJ-01-EV-4412</td>
+                                            <td>Today, 15:30 PM</td>
+                                            <td><span class="badge bg-info text-dark">In Session</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ADMIN PAGE 4: USER ACCOUNTS & RFID CARDS -->
+                        <div id="admin-users" class="admin-view d-none">
+                            <h3 class="fw-bold mb-4">Driver Accounts & RFID Passes</h3>
+                            <div class="card border-0 shadow-sm">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Full Name</th>
+                                            <th>RFID Pass Tag</th>
+                                            <th>Wallet Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>USR-101</td>
+                                            <td>Rohan Verma</td>
+                                            <td><code>RFID-99201-SUN</code></td>
+                                            <td>$45.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>USR-102</td>
+                                            <td>Ananya Gupta</td>
+                                            <td><code>RFID-44102-SUN</code></td>
+                                            <td>$120.50</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ADMIN PAGE 5: TARIFF ENGINE & CONFIG -->
+                        <div id="admin-settings" class="admin-view d-none">
+                            <h3 class="fw-bold mb-4">Platform Configuration</h3>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card border-0 shadow-sm p-4">
+                                        <form>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Base Tariff Rate ($ / kWh)</label>
+                                                <input type="number" step="0.01" class="form-control" value="0.35">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Peak Hour Surge Multiplier</label>
+                                                <input type="number" step="0.1" class="form-control" value="1.2">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">OCPP Server Endpoint API</label>
+                                                <input type="text" class="form-control" value="wss://ocpp.sunvien.ev/v1.6">
+                                            </div>
+                                            <button type="button" class="btn btn-success" onclick="alert('Configuration Updated Successfully!')">Save Settings</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CLIENT FOOTER -->
+    <footer id="clientFooter" class="py-4 mt-auto">
+        <div class="container text-center text-md-between d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+            <div>
+                <span class="fw-bold text-white fs-5"><i class="bi bi-ev-station text-accent"></i> Sunvien.ev</span>
+                <p class="small mb-0">Smart Electric Vehicle Charging Infrastructure Network</p>
+            </div>
+            <div class="small">
+                &copy; 2026 Sunvien.ev Networks Inc. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SPA Navigation & Form Validation Script -->
+    <script>
+        // CLIENT ROUTER
+        function navigateTo(pageId) {
+            document.getElementById('adminContainer').classList.add('d-none');
+            document.getElementById('clientNavbar').classList.remove('d-none');
+            document.getElementById('clientFooter').classList.remove('d-none');
+            document.getElementById('adminHeader').classList.add('d-none');
+
+            document.querySelectorAll('.page-view').forEach(view => {
+                view.classList.remove('active');
+            });
+
+            document.querySelectorAll('.nav-client-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const targetPage = document.getElementById('page-' + pageId);
+            const targetLink = document.getElementById('link-' + pageId);
+
+            if (targetPage) targetPage.classList.add('active');
+            if (targetLink) targetLink.classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        // SWITCH TO ADMIN PORTAL
+        function switchToAdmin() {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('clientNavbar').classList.add('d-none');
+            document.getElementById('clientFooter').classList.add('d-none');
+            document.getElementById('adminHeader').classList.remove('d-none');
+            document.getElementById('adminContainer').classList.remove('d-none');
+            navigateAdmin('admin-dashboard');
+        }
+
+        // SWITCH TO CLIENT PORTAL
+        function switchToClient() {
+            navigateTo('home');
+        }
+
+        // ADMIN SUB-ROUTER
+        function navigateAdmin(adminViewId) {
+            document.querySelectorAll('.admin-view').forEach(v => v.classList.add('d-none'));
+            document.querySelectorAll('.admin-sidebar .nav-link').forEach(l => l.classList.remove('active'));
+
+            const targetView = document.getElementById(adminViewId);
+            const targetLink = document.getElementById('admin-link-' + adminViewId.replace('admin-', ''));
+
+            if (targetView) targetView.classList.remove('d-none');
+            if (targetLink) targetLink.classList.active;
+            if (targetLink) targetLink.classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        // JAVASCRIPT FORM VALIDATION HANDLER
+        (() => {
+          'use strict'
+          const forms = document.querySelectorAll('.needs-validation')
+
+          Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+              if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+              } else {
+                event.preventDefault();
+                alert('Success! Your request was processed by Sunvien.ev.');
+                form.reset();
+                form.classList.remove('was-validated');
+                return;
+              }
+              form.classList.add('was-validated')
+            }, false)
+          })
+        })()
+    </script>
+</body>
+</html>    
